@@ -4,55 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Overlay Marcador</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: transparent; font-family: 'Arial Black', 'Impact', sans-serif; padding: 16px; }
-
-  .wrapper { display: inline-flex; flex-direction: column; align-items: center; }
-
-  .extra-bar {
-    background: #ffd600; color: #000; text-align: center;
-    font-size: 10px; font-weight: 900; text-transform: uppercase;
-    letter-spacing: 2px; padding: 3px 16px;
-    border-radius: 4px 4px 0 0;
-    display: none;
-  }
-  .extra-bar.on { display: block; }
-
-  .scorebar {
-    display: inline-flex; align-items: stretch;
-    border-radius: 6px; overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.07);
-  }
-  .extra-bar.on + .scorebar { border-radius: 0 0 6px 6px; }
-
-  .team-name {
-    padding: 10px 16px; font-size: 16px; font-weight: 900;
-    text-transform: uppercase; letter-spacing: 1px;
-    white-space: nowrap; min-width: 80px; text-align: center;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .team-name.loc { background: #1a1a2e; color: #fff; border-right: 2px solid rgba(255,255,255,0.1); }
-  .team-name.vis { background: #1a1a2e; color: #fff; border-left:  2px solid rgba(255,255,255,0.1); }
-
-  .score-box {
-    padding: 10px 18px; font-size: 28px; font-weight: 900;
-    min-width: 52px; text-align: center; font-variant-numeric: tabular-nums;
-    line-height: 1; display: flex; align-items: center; justify-content: center;
-    background: #16213e; color: #00e676;
-  }
-
-  .center {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: #0f0f0f; padding: 6px 10px; min-width: 58px; gap: 1px;
-  }
-  .c-timer  { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: #00e676; font-variant-numeric: tabular-nums; }
-  .c-dash   { color: #666; font-size: 20px; font-weight: 900; line-height: 1; }
-  .c-period { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #ffd600; white-space: nowrap; }
-
-  @keyframes flash { 0%,100%{opacity:1} 50%{opacity:0.25} }
-  .flash { animation: flash 0.4s ease 3; }
-</style>
+<link rel="stylesheet" href="css/overlay.css" />
 </head>
 <body>
 <div class="wrapper">
@@ -70,65 +22,6 @@
   </div>
 </div>
 
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-
-const app = initializeApp({ databaseURL: 'https://scoreboard-e139e-default-rtdb.firebaseio.com' }, 'ovl');
-const db  = getDatabase(app);
-const mRef = ref(db, 'match');
-
-let prevA = 0, prevB = 0;
-let localSec = 0, localOn = false, localIv = null;
-
-const $ = id => document.getElementById(id);
-
-function flash(el) {
-  el.classList.remove('flash');
-  void el.offsetWidth;
-  el.classList.add('flash');
-}
-
-function renderTimer() {
-  const m = String(Math.floor(localSec/60)).padStart(2,'0');
-  const s = String(localSec%60).padStart(2,'0');
-  $('ct').textContent = m+':'+s;
-}
-
-function startLocal() {
-  if (localIv) return;
-  localIv = setInterval(() => { localSec++; renderTimer(); }, 1000);
-}
-function stopLocal() {
-  clearInterval(localIv); localIv = null;
-}
-
-onValue(mRef, snap => {
-  const s = snap.val();
-  if (!s) return;
-
-  $('na').textContent = (s.nameA||'LOCAL').toUpperCase();
-  $('nb').textContent = (s.nameB||'VISITA').toUpperCase();
-
-  const sa = s.scoreA ?? 0;
-  const sb = s.scoreB ?? 0;
-  if (sa !== prevA) { flash($('sa')); prevA = sa; }
-  if (sb !== prevB) { flash($('sb')); prevB = sb; }
-  $('sa').textContent = sa;
-  $('sb').textContent = sb;
-
-  $('cp').textContent = s.period || '';
-
-  const ex = s.extra || '';
-  $('extra-bar').textContent = ex;
-  $('extra-bar').className = 'extra-bar' + (ex ? ' on' : '');
-
-  stopLocal();
-  localSec = s.timerSeconds || 0;
-  localOn  = !!s.timerRunning;
-  renderTimer();
-  if (localOn) startLocal();
-});
-</script>
+<script type="module" src="js/overlay.js"></script>
 </body>
 </html>

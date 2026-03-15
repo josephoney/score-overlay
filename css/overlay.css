@@ -1,0 +1,47 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: transparent; font-family: 'Arial Black', 'Impact', sans-serif; padding: 16px; }
+
+.wrapper { display: inline-flex; flex-direction: column; align-items: center; }
+
+.extra-bar {
+  background: #ffd600; color: #000; text-align: center;
+  font-size: 10px; font-weight: 900; text-transform: uppercase;
+  letter-spacing: 2px; padding: 3px 16px;
+  border-radius: 4px 4px 0 0;
+  display: none;
+}
+.extra-bar.on { display: block; }
+
+.scorebar {
+  display: inline-flex; align-items: stretch;
+  border-radius: 6px; overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.07);
+}
+.extra-bar.on + .scorebar { border-radius: 0 0 6px 6px; }
+
+.team-name {
+  padding: 10px 16px; font-size: 16px; font-weight: 900;
+  text-transform: uppercase; letter-spacing: 1px;
+  white-space: nowrap; min-width: 80px; text-align: center;
+  display: flex; align-items: center; justify-content: center;
+}
+.team-name.loc { background: #1a1a2e; color: #fff; border-right: 2px solid rgba(255,255,255,0.1); }
+.team-name.vis { background: #1a1a2e; color: #fff; border-left:  2px solid rgba(255,255,255,0.1); }
+
+.score-box {
+  padding: 10px 18px; font-size: 28px; font-weight: 900;
+  min-width: 52px; text-align: center; font-variant-numeric: tabular-nums;
+  line-height: 1; display: flex; align-items: center; justify-content: center;
+  background: #16213e; color: #00e676;
+}
+
+.center {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: #0f0f0f; padding: 6px 10px; min-width: 58px; gap: 1px;
+}
+.c-timer  { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: #00e676; font-variant-numeric: tabular-nums; }
+.c-dash   { color: #666; font-size: 20px; font-weight: 900; line-height: 1; }
+.c-period { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #ffd600; white-space: nowrap; }
+
+@keyframes flash { 0%,100%{opacity:1} 50%{opacity:0.25} }
+.flash { animation: flash 0.4s ease 3; }
