@@ -6,235 +6,129 @@
 <title>Overlay Marcador</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: transparent; font-family: 'Arial Black', 'Impact', sans-serif; padding: 16px; }
 
-  body {
-    background: transparent;
-    font-family: 'Arial Black', 'Impact', 'Segoe UI Black', sans-serif;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 16px;
-    min-height: 100vh;
-  }
-
-  .scorebar {
-    display: inline-flex;
-    align-items: stretch;
-    border-radius: 6px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08);
-    min-width: 320px;
-  }
-
-  .team-block {
-    display: flex;
-    align-items: center;
-    gap: 0;
-  }
-
-  .team-name {
-    padding: 10px 14px;
-    font-size: 16px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    white-space: nowrap;
-    min-width: 90px;
-    text-align: center;
-  }
-
-  .team-name.local {
-    background: #1a1a2e;
-    color: #ffffff;
-    border-right: 2px solid rgba(255,255,255,0.1);
-  }
-
-  .score-box {
-    padding: 10px 18px;
-    font-size: 28px;
-    font-weight: 900;
-    min-width: 52px;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .score-box.local-score {
-    background: #16213e;
-    color: #00e676;
-  }
-
-  .center-divider {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: #0f0f0f;
-    padding: 6px 10px;
-    min-width: 60px;
-    gap: 2px;
-  }
-  .dash {
-    color: #888;
-    font-size: 22px;
-    font-weight: 900;
-    line-height: 1;
-  }
-  .period-badge {
-    font-size: 9px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #ffd600;
-    white-space: nowrap;
-  }
-  .timer-badge {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: #00e676;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .score-box.visitor-score {
-    background: #16213e;
-    color: #00e676;
-  }
-  .team-name.visitor {
-    background: #1a1a2e;
-    color: #ffffff;
-    border-left: 2px solid rgba(255,255,255,0.1);
-  }
+  .wrapper { display: inline-flex; flex-direction: column; align-items: center; }
 
   .extra-bar {
-    background: #ffd600;
-    color: #000;
-    text-align: center;
-    font-size: 10px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    padding: 3px 12px;
+    background: #ffd600; color: #000; text-align: center;
+    font-size: 10px; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 2px; padding: 3px 16px;
+    border-radius: 4px 4px 0 0;
     display: none;
   }
-  .extra-bar.visible { display: block; }
+  .extra-bar.on { display: block; }
 
-  .wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
+  .scorebar {
+    display: inline-flex; align-items: stretch;
+    border-radius: 6px; overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.07);
+  }
+  .extra-bar.on + .scorebar { border-radius: 0 0 6px 6px; }
+
+  .team-name {
+    padding: 10px 16px; font-size: 16px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 1px;
+    white-space: nowrap; min-width: 80px; text-align: center;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .team-name.loc { background: #1a1a2e; color: #fff; border-right: 2px solid rgba(255,255,255,0.1); }
+  .team-name.vis { background: #1a1a2e; color: #fff; border-left:  2px solid rgba(255,255,255,0.1); }
+
+  .score-box {
+    padding: 10px 18px; font-size: 28px; font-weight: 900;
+    min-width: 52px; text-align: center; font-variant-numeric: tabular-nums;
+    line-height: 1; display: flex; align-items: center; justify-content: center;
+    background: #16213e; color: #00e676;
   }
 
-  @keyframes goalFlash {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
+  .center {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: #0f0f0f; padding: 6px 10px; min-width: 58px; gap: 1px;
   }
-  .goal-flash { animation: goalFlash 0.4s ease 3; }
+  .c-timer  { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: #00e676; font-variant-numeric: tabular-nums; }
+  .c-dash   { color: #666; font-size: 20px; font-weight: 900; line-height: 1; }
+  .c-period { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #ffd600; white-space: nowrap; }
+
+  @keyframes flash { 0%,100%{opacity:1} 50%{opacity:0.25} }
+  .flash { animation: flash 0.4s ease 3; }
 </style>
 </head>
 <body>
 <div class="wrapper">
   <div id="extra-bar" class="extra-bar"></div>
   <div class="scorebar">
-    <div class="team-block">
-      <div class="team-name local" id="name-a">LOCAL</div>
-      <div class="score-box local-score" id="score-a">0</div>
+    <div class="team-name loc" id="na">LOCAL</div>
+    <div class="score-box"     id="sa">0</div>
+    <div class="center">
+      <div class="c-timer"  id="ct">00:00</div>
+      <div class="c-dash">–</div>
+      <div class="c-period" id="cp"></div>
     </div>
-    <div class="center-divider">
-      <div class="timer-badge" id="timer-overlay">00:00</div>
-      <div class="dash">–</div>
-      <div class="period-badge" id="period-overlay"></div>
-    </div>
-    <div class="team-block">
-      <div class="score-box visitor-score" id="score-b">0</div>
-      <div class="team-name visitor" id="name-b">VISITA</div>
-    </div>
+    <div class="score-box"     id="sb">0</div>
+    <div class="team-name vis" id="nb">VISITA</div>
   </div>
 </div>
 
-<script>
-const STATE_KEY = 'soccer_scorer_state';
-let prevScoreA = 0, prevScoreB = 0;
-let localTimer = 0;
-let localRunning = false;
-let localInterval = null;
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
-function applyState(s) {
+const app = initializeApp({ databaseURL: 'https://scoreboard-e139e-default-rtdb.firebaseio.com' }, 'ovl');
+const db  = getDatabase(app);
+const mRef = ref(db, 'match');
+
+let prevA = 0, prevB = 0;
+let localSec = 0, localOn = false, localIv = null;
+
+const $ = id => document.getElementById(id);
+
+function flash(el) {
+  el.classList.remove('flash');
+  void el.offsetWidth;
+  el.classList.add('flash');
+}
+
+function renderTimer() {
+  const m = String(Math.floor(localSec/60)).padStart(2,'0');
+  const s = String(localSec%60).padStart(2,'0');
+  $('ct').textContent = m+':'+s;
+}
+
+function startLocal() {
+  if (localIv) return;
+  localIv = setInterval(() => { localSec++; renderTimer(); }, 1000);
+}
+function stopLocal() {
+  clearInterval(localIv); localIv = null;
+}
+
+onValue(mRef, snap => {
+  const s = snap.val();
   if (!s) return;
 
-  const newA = document.getElementById('name-a');
-  const newB = document.getElementById('name-b');
-  const sa = document.getElementById('score-a');
-  const sb = document.getElementById('score-b');
-  const extra = document.getElementById('extra-bar');
+  $('na').textContent = (s.nameA||'LOCAL').toUpperCase();
+  $('nb').textContent = (s.nameB||'VISITA').toUpperCase();
 
-  newA.textContent = (s.nameA || 'LOCAL').toUpperCase();
-  newB.textContent = (s.nameB || 'VISITA').toUpperCase();
+  const sa = s.scoreA ?? 0;
+  const sb = s.scoreB ?? 0;
+  if (sa !== prevA) { flash($('sa')); prevA = sa; }
+  if (sb !== prevB) { flash($('sb')); prevB = sb; }
+  $('sa').textContent = sa;
+  $('sb').textContent = sb;
 
-  if (s.scoreA !== prevScoreA) {
-    sa.classList.remove('goal-flash');
-    void sa.offsetWidth;
-    sa.classList.add('goal-flash');
-    prevScoreA = s.scoreA;
-  }
-  if (s.scoreB !== prevScoreB) {
-    sb.classList.remove('goal-flash');
-    void sb.offsetWidth;
-    sb.classList.add('goal-flash');
-    prevScoreB = s.scoreB;
-  }
+  $('cp').textContent = s.period || '';
 
-  sa.textContent = s.scoreA ?? 0;
-  sb.textContent = s.scoreB ?? 0;
+  const ex = s.extra || '';
+  $('extra-bar').textContent = ex;
+  $('extra-bar').className = 'extra-bar' + (ex ? ' on' : '');
 
-  document.getElementById('period-overlay').textContent = s.period || '';
-
-  const extraText = s.extra || '';
-  extra.textContent = extraText;
-  extra.className = 'extra-bar' + (extraText ? ' visible' : '');
-
-  if (typeof s.timerSeconds === 'number') {
-    localTimer = s.timerSeconds;
-    localRunning = !!s.timerRunning;
-    renderLocalTimer();
-    if (localRunning && !localInterval) {
-      localInterval = setInterval(() => {
-        localTimer++;
-        renderLocalTimer();
-      }, 1000);
-    } else if (!localRunning && localInterval) {
-      clearInterval(localInterval);
-      localInterval = null;
-    }
-  }
-}
-
-function renderLocalTimer() {
-  const m = String(Math.floor(localTimer / 60)).padStart(2, '0');
-  const s = String(localTimer % 60).padStart(2, '0');
-  document.getElementById('timer-overlay').textContent = m + ':' + s;
-}
-
-function loadFromStorage() {
-  try {
-    const s = JSON.parse(localStorage.getItem(STATE_KEY));
-    applyState(s);
-  } catch(e) {}
-}
-
-try {
-  const ch = new BroadcastChannel('scorer');
-  ch.onmessage = (e) => {
-    if (localInterval) { clearInterval(localInterval); localInterval = null; }
-    applyState(e.data);
-  };
-} catch(e) {}
-
-loadFromStorage();
-setInterval(loadFromStorage, 3000);
+  stopLocal();
+  localSec = s.timerSeconds || 0;
+  localOn  = !!s.timerRunning;
+  renderTimer();
+  if (localOn) startLocal();
+});
 </script>
 </body>
 </html>

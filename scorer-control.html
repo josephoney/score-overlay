@@ -6,327 +6,101 @@
 <title>Control Marcador</title>
 <style>
   :root {
-    --green: #00c853;
-    --green-dark: #009624;
-    --red: #d32f2f;
-    --yellow: #f9a825;
-    --bg: #0d0d0d;
-    --surface: #1a1a1a;
-    --surface2: #252525;
-    --border: #333;
-    --text: #f0f0f0;
-    --muted: #888;
-    --accent: #00e676;
+    --green: #00c853; --green-dark: #009624; --red: #d32f2f; --yellow: #f9a825;
+    --bg: #0d0d0d; --surface: #1a1a1a; --surface2: #252525; --border: #333;
+    --text: #f0f0f0; --muted: #888; --accent: #00e676;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; padding: 12px; }
-
-  h1 { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); text-align: center; padding: 8px 0 16px; }
-
-  .scoreboard-preview {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .team-score {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    flex: 1;
-  }
-  .team-name-display {
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--muted);
-    max-width: 90px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: center;
-  }
-  .score-number {
-    font-size: 52px;
-    font-weight: 900;
-    line-height: 1;
-    color: var(--text);
-    font-variant-numeric: tabular-nums;
-  }
-  .separator {
-    font-size: 36px;
-    color: var(--muted);
-    font-weight: 300;
-    flex-shrink: 0;
-  }
-
-  .timer-display {
-    text-align: center;
-    margin-bottom: 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px;
-  }
-  .timer-time {
-    font-size: 44px;
-    font-weight: 700;
-    letter-spacing: 4px;
-    font-variant-numeric: tabular-nums;
-    color: var(--accent);
-  }
-  .timer-time.running { color: var(--green); }
-  .timer-time.paused { color: var(--yellow); }
-  .timer-time.stopped { color: var(--muted); }
-
-  .timer-controls {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-  }
-  .btn {
-    flex: 1;
-    padding: 14px 8px;
-    border: none;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.1s, opacity 0.1s;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .btn:active { transform: scale(0.95); opacity: 0.85; }
-  .btn-start { background: var(--green); color: #000; }
-  .btn-pause { background: var(--yellow); color: #000; }
-  .btn-stop  { background: var(--red); color: #fff; }
-  .btn-reset { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
-
-  .section-title {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--muted);
-    margin-bottom: 8px;
-    padding-left: 4px;
-  }
-
-  .team-block {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 12px;
-  }
-  .team-block label {
-    display: block;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--muted);
-    margin-bottom: 6px;
-  }
-  .team-name-input {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-size: 16px;
-    font-weight: 600;
-    padding: 10px 12px;
-    margin-bottom: 14px;
-    outline: none;
-  }
-  .team-name-input:focus { border-color: var(--accent); }
-
-  .score-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .score-controls label {
-    flex: 0 0 auto;
-    margin-bottom: 0;
-  }
-  .score-btn {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    border: none;
-    font-size: 26px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.1s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .score-btn:active { transform: scale(0.92); }
-  .score-btn-minus { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
-  .score-btn-plus  { background: var(--accent); color: #000; }
-  .score-value {
-    font-size: 36px;
-    font-weight: 900;
-    min-width: 48px;
-    text-align: center;
-    flex: 1;
-  }
-
-  .period-block {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .period-label { font-size: 13px; color: var(--muted); flex: 1; }
-  .period-select {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-size: 15px;
-    font-weight: 600;
-    padding: 8px 12px;
-    outline: none;
-    cursor: pointer;
-  }
-
-  .extra-block {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .extra-label { font-size: 13px; color: var(--muted); flex: 1; min-width: 100px; }
-  .extra-input {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-size: 15px;
-    font-weight: 600;
-    padding: 8px 12px;
-    width: 80px;
-    text-align: center;
-    outline: none;
-  }
-  .extra-input:focus { border-color: var(--accent); }
-
-  .overlay-link-block {
-    background: #0d1f0d;
-    border: 1px solid var(--green-dark);
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 20px;
-  }
-  .overlay-link-block p {
-    font-size: 12px;
-    color: #66bb6a;
-    margin-bottom: 8px;
-    line-height: 1.5;
-  }
-  .overlay-link-block code {
-    font-size: 11px;
-    background: #000;
-    color: var(--accent);
-    padding: 8px 10px;
-    border-radius: 6px;
-    display: block;
-    word-break: break-all;
-    margin-bottom: 8px;
-  }
-  .btn-copy {
-    width: 100%;
-    padding: 10px;
-    background: var(--green-dark);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .btn-copy:active { opacity: 0.8; }
-
-  .footer { text-align: center; font-size: 11px; color: var(--muted); padding: 8px 0 20px; }
+  h1 { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); text-align: center; padding: 8px 0 12px; }
+  .status-bar { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 14px; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); transition: background 0.3s; }
+  .status-dot.on  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .status-dot.err { background: var(--red); }
+  .status-label { color: var(--muted); font-size: 12px; }
+  .preview { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .ts { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+  .tn { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
+  .sn { font-size: 52px; font-weight: 900; line-height: 1; color: var(--text); font-variant-numeric: tabular-nums; }
+  .sep { font-size: 36px; color: var(--muted); font-weight: 300; }
+  .timer-box { text-align: center; margin-bottom: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+  .tt { font-size: 44px; font-weight: 700; letter-spacing: 4px; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .tt.r { color: var(--green); } .tt.p { color: var(--yellow); } .tt.s { color: var(--muted); }
+  .tc { display: flex; gap: 8px; margin-top: 10px; }
+  .btn { flex: 1; padding: 14px 8px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 0.1s; text-transform: uppercase; letter-spacing: 0.5px; }
+  .btn:active { transform: scale(0.95); }
+  .bs { background: var(--green); color: #000; } .bp { background: var(--yellow); color: #000; }
+  .bd { background: var(--red); color: #fff; }   .br { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+  .sec { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 8px; padding-left: 4px; }
+  .tb { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+  .tb lbl, .tb label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 6px; }
+  .ni { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 16px; font-weight: 600; padding: 10px 12px; margin-bottom: 14px; outline: none; }
+  .ni:focus { border-color: var(--accent); }
+  .sc { display: flex; align-items: center; gap: 10px; }
+  .sb { width: 52px; height: 52px; border-radius: 50%; border: none; font-size: 26px; font-weight: 700; cursor: pointer; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .sb:active { transform: scale(0.92); }
+  .sm { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+  .sp { background: var(--accent); color: #000; }
+  .sv { font-size: 36px; font-weight: 900; min-width: 48px; text-align: center; flex: 1; }
+  .pb { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .pl { font-size: 13px; color: var(--muted); flex: 1; }
+  .ps { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 15px; font-weight: 600; padding: 8px 12px; outline: none; cursor: pointer; }
+  .eb { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .el { font-size: 13px; color: var(--muted); flex: 1; min-width: 100px; }
+  .ei { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 15px; font-weight: 600; padding: 8px 12px; width: 110px; text-align: center; outline: none; }
+  .ei:focus { border-color: var(--accent); }
+  .footer { text-align: center; font-size: 11px; color: var(--muted); padding: 4px 0 20px; }
 </style>
 </head>
 <body>
-
 <h1>⚽ Control de Marcador</h1>
+<div class="status-bar">
+  <div class="status-dot" id="sdot"></div>
+  <span class="status-label" id="slbl">Conectando...</span>
+</div>
 
-<div class="scoreboard-preview">
-  <div class="team-score">
-    <div class="team-name-display" id="disp-name-a">LOCAL</div>
-    <div class="score-number" id="disp-score-a">0</div>
-  </div>
-  <div class="separator">–</div>
-  <div class="team-score">
-    <div class="team-name-display" id="disp-name-b">VISITA</div>
-    <div class="score-number" id="disp-score-b">0</div>
+<div class="preview">
+  <div class="ts"><div class="tn" id="dna">LOCAL</div><div class="sn" id="dsa">0</div></div>
+  <div class="sep">–</div>
+  <div class="ts"><div class="tn" id="dnb">VISITA</div><div class="sn" id="dsb">0</div></div>
+</div>
+
+<div class="timer-box">
+  <div class="tt s" id="td">00:00</div>
+  <div class="tc">
+    <button class="btn bs" id="btn-start" onclick="startTimer()">Iniciar</button>
+    <button class="btn bp" id="btn-pause" onclick="pauseTimer()" disabled>Pausar</button>
+    <button class="btn bd" onclick="stopTimer()">Detener</button>
+    <button class="btn br" onclick="resetTimer()">Reset</button>
   </div>
 </div>
 
-<div class="timer-display">
-  <div class="timer-time stopped" id="timer-display">00:00</div>
-  <div class="timer-controls">
-    <button class="btn btn-start" id="btn-start" onclick="startTimer()">Iniciar</button>
-    <button class="btn btn-pause" id="btn-pause" onclick="pauseTimer()" disabled>Pausar</button>
-    <button class="btn btn-stop" onclick="stopTimer()">Detener</button>
-    <button class="btn btn-reset" onclick="resetTimer()">Reset</button>
-  </div>
-</div>
-
-<div class="section-title">Equipos y marcador</div>
-
-<div class="team-block">
+<div class="sec">Equipos y marcador</div>
+<div class="tb">
   <label>Equipo Local</label>
-  <input class="team-name-input" id="name-a" type="text" value="Local" maxlength="20" oninput="updateState()" />
-  <div class="score-controls">
-    <label>Goles</label>
-    <button class="score-btn score-btn-minus" onclick="changeScore('a',-1)">−</button>
-    <div class="score-value" id="score-a-val">0</div>
-    <button class="score-btn score-btn-plus" onclick="changeScore('a',1)">+</button>
+  <input class="ni" id="na" type="text" value="Local" maxlength="20" oninput="sync()" />
+  <div class="sc">
+    <label style="margin:0">Goles</label>
+    <button class="sb sm" onclick="chScore('a',-1)">−</button>
+    <div class="sv" id="sav">0</div>
+    <button class="sb sp" onclick="chScore('a',1)">+</button>
   </div>
 </div>
-
-<div class="team-block">
+<div class="tb">
   <label>Equipo Visitante</label>
-  <input class="team-name-input" id="name-b" type="text" value="Visita" maxlength="20" oninput="updateState()" />
-  <div class="score-controls">
-    <label>Goles</label>
-    <button class="score-btn score-btn-minus" onclick="changeScore('b',-1)">−</button>
-    <div class="score-value" id="score-b-val">0</div>
-    <button class="score-btn score-btn-plus" onclick="changeScore('b',1)">+</button>
+  <input class="ni" id="nb" type="text" value="Visita" maxlength="20" oninput="sync()" />
+  <div class="sc">
+    <label style="margin:0">Goles</label>
+    <button class="sb sm" onclick="chScore('b',-1)">−</button>
+    <div class="sv" id="sbv">0</div>
+    <button class="sb sp" onclick="chScore('b',1)">+</button>
   </div>
 </div>
 
-<div class="section-title">Información del partido</div>
-
-<div class="period-block">
-  <span class="period-label">Período / Tiempo</span>
-  <select class="period-select" id="period-select" onchange="updateState()">
+<div class="sec">Información del partido</div>
+<div class="pb">
+  <span class="pl">Período / Tiempo</span>
+  <select class="ps" id="per" onchange="sync()">
     <option value="">—</option>
     <option value="1T">1° Tiempo</option>
     <option value="2T">2° Tiempo</option>
@@ -335,155 +109,102 @@
     <option value="HT">Descanso</option>
   </select>
 </div>
-
-<div class="extra-block">
-  <span class="extra-label">Texto libre (torneo, fecha...)</span>
-  <input class="extra-input" id="extra-text" type="text" placeholder="Ej: Final" maxlength="16" oninput="updateState()" />
+<div class="eb">
+  <span class="el">Texto libre (torneo, fecha...)</span>
+  <input class="ei" id="ext" type="text" placeholder="Ej: Final" maxlength="16" oninput="sync()" />
 </div>
 
-<div class="section-title">URL del Overlay (para Larix / OBS)</div>
-<div class="overlay-link-block">
-  <p>Abre esta URL como <strong>Browser Source</strong> en Larix Broadcaster o OBS. Se actualiza automáticamente cuando cambies el marcador.</p>
-  <code id="overlay-url">Generando...</code>
-  <button class="btn-copy" onclick="copyUrl()">Copiar URL</button>
-</div>
+<div class="footer">Firebase: scoreboard-e139e · Actualización en tiempo real</div>
 
-<div class="footer">Datos guardados en este navegador · Actualización en tiempo real</div>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
-<script>
-const STATE_KEY = 'soccer_scorer_state';
-let timerInterval = null;
-let timerSeconds = 0;
-let timerRunning = false;
+const app = initializeApp({ databaseURL: 'https://scoreboard-e139e-default-rtdb.firebaseio.com' }, 'ctrl');
+const db  = getDatabase(app);
+const mRef = ref(db, 'match');
 
-const state = {
-  nameA: 'Local',
-  nameB: 'Visita',
-  scoreA: 0,
-  scoreB: 0,
-  period: '',
-  extra: '',
-  timerSeconds: 0,
-  timerRunning: false
+let timerSec = 0, timerOn = false, timerIv = null, syncT = null, skipRemote = false;
+const st = { nameA:'Local', nameB:'Visita', scoreA:0, scoreB:0, period:'', extra:'', timerSeconds:0, timerRunning:false };
+
+const $  = id => document.getElementById(id);
+const ss = (id,v) => $(id).textContent = v;
+
+function status(ok, msg) {
+  $('sdot').className = 'status-dot ' + (ok ? 'on' : 'err');
+  $('slbl').textContent = msg;
+}
+
+function push() {
+  st.nameA = $('na').value || 'Local';
+  st.nameB = $('nb').value || 'Visita';
+  st.period = $('per').value;
+  st.extra  = $('ext').value;
+  st.timerSeconds = timerSec;
+  st.timerRunning = timerOn;
+  skipRemote = true;
+  set(mRef, { ...st, ts: Date.now() })
+    .then(() => { status(true,'Sincronizado'); setTimeout(()=>skipRemote=false,600); })
+    .catch(() => status(false,'Error al guardar'));
+}
+
+function previews() {
+  $('dna').textContent = ($('na').value||'Local').toUpperCase();
+  $('dnb').textContent = ($('nb').value||'Visita').toUpperCase();
+}
+
+window.sync = function() { previews(); clearTimeout(syncT); syncT = setTimeout(push, 400); };
+
+window.chScore = function(t, d) {
+  if (t==='a') { st.scoreA = Math.max(0,st.scoreA+d); ss('sav',st.scoreA); ss('dsa',st.scoreA); }
+  else         { st.scoreB = Math.max(0,st.scoreB+d); ss('sbv',st.scoreB); ss('dsb',st.scoreB); }
+  push();
 };
 
-function saveState() {
-  state.timerSeconds = timerSeconds;
-  state.timerRunning = timerRunning;
-  localStorage.setItem(STATE_KEY, JSON.stringify(state));
-  try { new BroadcastChannel('scorer').postMessage(state); } catch(e) {}
-  updateOverlayUrl();
+function renderT() {
+  const m = String(Math.floor(timerSec/60)).padStart(2,'0');
+  const s = String(timerSec%60).padStart(2,'0');
+  $('td').textContent = m+':'+s;
+  $('td').className = 'tt ' + (timerOn ? 'r' : timerSec>0 ? 'p' : 's');
 }
 
-function loadState() {
-  try {
-    const s = JSON.parse(localStorage.getItem(STATE_KEY));
-    if (s) Object.assign(state, s);
-  } catch(e) {}
-  document.getElementById('name-a').value = state.nameA;
-  document.getElementById('name-b').value = state.nameB;
-  document.getElementById('score-a-val').textContent = state.scoreA;
-  document.getElementById('score-b-val').textContent = state.scoreB;
-  document.getElementById('period-select').value = state.period || '';
-  document.getElementById('extra-text').value = state.extra || '';
-  document.getElementById('disp-name-a').textContent = state.nameA.toUpperCase();
-  document.getElementById('disp-name-b').textContent = state.nameB.toUpperCase();
-  document.getElementById('disp-score-a').textContent = state.scoreA;
-  document.getElementById('disp-score-b').textContent = state.scoreB;
-  timerSeconds = state.timerSeconds || 0;
-  renderTimer();
-  if (state.timerRunning) startTimer();
-  updateOverlayUrl();
-}
+window.startTimer = function() {
+  if (timerOn) return;
+  timerOn = true;
+  $('btn-start').disabled = true; $('btn-pause').disabled = false;
+  timerIv = setInterval(() => { timerSec++; renderT(); if(timerSec%5===0) push(); }, 1000);
+  renderT(); push();
+};
+window.pauseTimer = function() {
+  if (!timerOn) return;
+  timerOn = false; clearInterval(timerIv);
+  $('btn-start').disabled = false; $('btn-pause').disabled = true;
+  renderT(); push();
+};
+window.stopTimer = function() {
+  timerOn = false; clearInterval(timerIv);
+  $('btn-start').disabled = false; $('btn-pause').disabled = true;
+  renderT(); push();
+};
+window.resetTimer = function() {
+  window.stopTimer(); timerSec = 0; renderT(); push();
+};
 
-function updateState() {
-  state.nameA = document.getElementById('name-a').value || 'Local';
-  state.nameB = document.getElementById('name-b').value || 'Visita';
-  state.period = document.getElementById('period-select').value;
-  state.extra  = document.getElementById('extra-text').value;
-  document.getElementById('disp-name-a').textContent = state.nameA.toUpperCase();
-  document.getElementById('disp-name-b').textContent = state.nameB.toUpperCase();
-  saveState();
-}
+onValue(mRef, snap => {
+  if (skipRemote) return;
+  const s = snap.val();
+  if (!s) { status(true,'Conectado'); return; }
+  status(true,'Sincronizado');
+  Object.assign(st, s);
+  $('na').value = s.nameA||'Local'; $('nb').value = s.nameB||'Visita';
+  ss('sav',s.scoreA??0); ss('sbv',s.scoreB??0);
+  ss('dsa',s.scoreA??0); ss('dsb',s.scoreB??0);
+  $('per').value = s.period||''; $('ext').value = s.extra||'';
+  previews();
+  if (!timerOn) { timerSec = s.timerSeconds||0; renderT(); }
+}, () => status(false,'Sin conexión'));
 
-function changeScore(team, delta) {
-  if (team === 'a') {
-    state.scoreA = Math.max(0, state.scoreA + delta);
-    document.getElementById('score-a-val').textContent = state.scoreA;
-    document.getElementById('disp-score-a').textContent = state.scoreA;
-  } else {
-    state.scoreB = Math.max(0, state.scoreB + delta);
-    document.getElementById('score-b-val').textContent = state.scoreB;
-    document.getElementById('disp-score-b').textContent = state.scoreB;
-  }
-  saveState();
-}
-
-function renderTimer() {
-  const m = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
-  const s = String(timerSeconds % 60).padStart(2, '0');
-  const el = document.getElementById('timer-display');
-  el.textContent = m + ':' + s;
-  el.className = 'timer-time ' + (timerRunning ? 'running' : timerSeconds > 0 ? 'paused' : 'stopped');
-}
-
-function startTimer() {
-  if (timerRunning) return;
-  timerRunning = true;
-  timerInterval = setInterval(() => {
-    timerSeconds++;
-    renderTimer();
-    if (timerSeconds % 5 === 0) saveState();
-  }, 1000);
-  document.getElementById('btn-start').disabled = true;
-  document.getElementById('btn-pause').disabled = false;
-  renderTimer();
-  saveState();
-}
-
-function pauseTimer() {
-  if (!timerRunning) return;
-  timerRunning = false;
-  clearInterval(timerInterval);
-  document.getElementById('btn-start').disabled = false;
-  document.getElementById('btn-pause').disabled = true;
-  renderTimer();
-  saveState();
-}
-
-function stopTimer() {
-  timerRunning = false;
-  clearInterval(timerInterval);
-  document.getElementById('btn-start').disabled = false;
-  document.getElementById('btn-pause').disabled = true;
-  renderTimer();
-  saveState();
-}
-
-function resetTimer() {
-  stopTimer();
-  timerSeconds = 0;
-  renderTimer();
-  saveState();
-}
-
-function updateOverlayUrl() {
-  const base = location.href.replace('scorer-control.html', 'scorer-overlay.html');
-  document.getElementById('overlay-url').textContent = base;
-}
-
-function copyUrl() {
-  const url = document.getElementById('overlay-url').textContent;
-  navigator.clipboard.writeText(url).then(() => {
-    const btn = document.querySelector('.btn-copy');
-    btn.textContent = '✓ Copiado!';
-    setTimeout(() => btn.textContent = 'Copiar URL', 2000);
-  }).catch(() => {
-    prompt('Copia esta URL:', url);
-  });
-}
-
-loadState();
+status(false,'Conectando...'); renderT();
 </script>
 </body>
 </html>
