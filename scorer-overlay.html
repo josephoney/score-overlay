@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overlay Marcador</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: transparent;
+    font-family: 'Arial Black', 'Impact', 'Segoe UI Black', sans-serif;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px;
+    min-height: 100vh;
+  }
+
+  .scorebar {
+    display: inline-flex;
+    align-items: stretch;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08);
+    min-width: 320px;
+  }
+
+  .team-block {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .team-name {
+    padding: 10px 14px;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    min-width: 90px;
+    text-align: center;
+  }
+
+  .team-name.local {
+    background: #1a1a2e;
+    color: #ffffff;
+    border-right: 2px solid rgba(255,255,255,0.1);
+  }
+
+  .score-box {
+    padding: 10px 18px;
+    font-size: 28px;
+    font-weight: 900;
+    min-width: 52px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .score-box.local-score {
+    background: #16213e;
+    color: #00e676;
+  }
+
+  .center-divider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #0f0f0f;
+    padding: 6px 10px;
+    min-width: 60px;
+    gap: 2px;
+  }
+  .dash {
+    color: #888;
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .period-badge {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ffd600;
+    white-space: nowrap;
+  }
+  .timer-badge {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #00e676;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .score-box.visitor-score {
+    background: #16213e;
+    color: #00e676;
+  }
+  .team-name.visitor {
+    background: #1a1a2e;
+    color: #ffffff;
+    border-left: 2px solid rgba(255,255,255,0.1);
+  }
+
+  .extra-bar {
+    background: #ffd600;
+    color: #000;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 3px 12px;
+    display: none;
+  }
+  .extra-bar.visible { display: block; }
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  @keyframes goalFlash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .goal-flash { animation: goalFlash 0.4s ease 3; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div id="extra-bar" class="extra-bar"></div>
+  <div class="scorebar">
+    <div class="team-block">
+      <div class="team-name local" id="name-a">LOCAL</div>
+      <div class="score-box local-score" id="score-a">0</div>
+    </div>
+    <div class="center-divider">
+      <div class="timer-badge" id="timer-overlay">00:00</div>
+      <div class="dash">–</div>
+      <div class="period-badge" id="period-overlay"></div>
+    </div>
+    <div class="team-block">
+      <div class="score-box visitor-score" id="score-b">0</div>
+      <div class="team-name visitor" id="name-b">VISITA</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STATE_KEY = 'soccer_scorer_state';
+let prevScoreA = 0, prevScoreB = 0;
+let localTimer = 0;
+let localRunning = false;
+let localInterval = null;
+
+function applyState(s) {
+  if (!s) return;
+
+  const newA = document.getElementById('name-a');
+  const newB = document.getElementById('name-b');
+  const sa = document.getElementById('score-a');
+  const sb = document.getElementById('score-b');
+  const extra = document.getElementById('extra-bar');
+
+  newA.textContent = (s.nameA || 'LOCAL').toUpperCase();
+  newB.textContent = (s.nameB || 'VISITA').toUpperCase();
+
+  if (s.scoreA !== prevScoreA) {
+    sa.classList.remove('goal-flash');
+    void sa.offsetWidth;
+    sa.classList.add('goal-flash');
+    prevScoreA = s.scoreA;
+  }
+  if (s.scoreB !== prevScoreB) {
+    sb.classList.remove('goal-flash');
+    void sb.offsetWidth;
+    sb.classList.add('goal-flash');
+    prevScoreB = s.scoreB;
+  }
+
+  sa.textContent = s.scoreA ?? 0;
+  sb.textContent = s.scoreB ?? 0;
+
+  document.getElementById('period-overlay').textContent = s.period || '';
+
+  const extraText = s.extra || '';
+  extra.textContent = extraText;
+  extra.className = 'extra-bar' + (extraText ? ' visible' : '');
+
+  if (typeof s.timerSeconds === 'number') {
+    localTimer = s.timerSeconds;
+    localRunning = !!s.timerRunning;
+    renderLocalTimer();
+    if (localRunning && !localInterval) {
+      localInterval = setInterval(() => {
+        localTimer++;
+        renderLocalTimer();
+      }, 1000);
+    } else if (!localRunning && localInterval) {
+      clearInterval(localInterval);
+      localInterval = null;
+    }
+  }
+}
+
+function renderLocalTimer() {
+  const m = String(Math.floor(localTimer / 60)).padStart(2, '0');
+  const s = String(localTimer % 60).padStart(2, '0');
+  document.getElementById('timer-overlay').textContent = m + ':' + s;
+}
+
+function loadFromStorage() {
+  try {
+    const s = JSON.parse(localStorage.getItem(STATE_KEY));
+    applyState(s);
+  } catch(e) {}
+}
+
+try {
+  const ch = new BroadcastChannel('scorer');
+  ch.onmessage = (e) => {
+    if (localInterval) { clearInterval(localInterval); localInterval = null; }
+    applyState(e.data);
+  };
+} catch(e) {}
+
+loadFromStorage();
+setInterval(loadFromStorage, 3000);
+</script>
+</body>
+</html>
